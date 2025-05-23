@@ -1,92 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ClassicalForum Login/Signup</title>
-<script type="module">
-// Import Firebase SDK functions
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-
-// Your Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyDshvpsAN2oXfl6_0BNrzvwjKotJomB-hU",
-  authDomain: "flame-fb774.firebaseapp.com",
-  projectId: "flame-fb774",
-  storageBucket: "flame-fb774.firebasestorage.app",
-  messagingSenderId: "959179533406",
-  appId: "1:959179533406:web:5bd238c96eebb6c9db58cf"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// Signup function
-window.signup = function() {
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
-  if (!email || !password) {
-    alert("Please enter email and password");
-    return;
-  }
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(userCredential => {
-      alert("Signup successful! Welcome, " + userCredential.user.email);
-      // Redirect or update UI here
-    })
-    .catch(error => {
-      alert("Signup error: " + error.message);
-    });
-};
-
-// Login function
-window.login = function() {
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
-  if (!email || !password) {
-    alert("Please enter email and password");
-    return;
-  }
-  signInWithEmailAndPassword(auth, email, password)
-    .then(userCredential => {
-      alert("Login successful! Welcome back, " + userCredential.user.email);
-      // Redirect or update UI here
-    })
-    .catch(error => {
-      alert("Login error: " + error.message);
-    });
-};
-</script>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    max-width: 400px;
-    margin: 2rem auto;
-    padding: 1rem;
-    text-align: center;
-  }
-  input {
-    display: block;
-    width: 100%;
-    margin: 0.5rem 0 1rem 0;
-    padding: 0.5rem;
-    font-size: 1rem;
-  }
-  button {
-    margin: 0.5rem;
-    padding: 0.7rem 1.5rem;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>ClassicalForum Simple Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 2rem auto;
+      text-align: center;
+    }
+    input {
+      display: block;
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0 1rem;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      margin: 0 0.5rem;
+      cursor: pointer;
+    }
+    #welcome {
+      margin-top: 2rem;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  </style>
 </head>
 <body>
-<h1>ClassicalForum</h1>
-<input id="email" type="email" placeholder="Email" />
-<input id="password" type="password" placeholder="Password" />
-<button onclick="signup()">Sign Up</button>
-<button onclick="login()">Login</button>
+  <h1>ClassicalForum</h1>
+
+  <input id="username" placeholder="Username" />
+  <input id="password" type="password" placeholder="Password" />
+
+  <button onclick="signup()">Sign Up</button>
+  <button onclick="login()">Login</button>
+
+  <div id="welcome"></div>
+
+  <script>
+    // Save users in localStorage as an object: { username: password }
+    function getUsers() {
+      return JSON.parse(localStorage.getItem('users') || '{}');
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    function signup() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username || !password) {
+        alert('Please enter username and password');
+        return;
+      }
+
+      const users = getUsers();
+
+      if (users[username]) {
+        alert('Username already exists!');
+        return;
+      }
+
+      users[username] = password;
+      saveUsers(users);
+      alert('Signup successful! You can now login.');
+      clearInputs();
+    }
+
+    function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username || !password) {
+        alert('Please enter username and password');
+        return;
+      }
+
+      const users = getUsers();
+
+      if (users[username] && users[username] === password) {
+        document.getElementById('welcome').textContent = `Welcome, ${username}! You are logged in.`;
+        clearInputs();
+        // You can save logged in user for session
+        localStorage.setItem('loggedInUser', username);
+      } else {
+        alert('Invalid username or password');
+      }
+    }
+
+    function clearInputs() {
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+    }
+
+    // Auto-login if user already logged in
+    window.onload = function() {
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      if (loggedInUser) {
+        document.getElementById('welcome').textContent = `Welcome back, ${loggedInUser}! You are logged in.`;
+      }
+    }
+  </script>
 </body>
 </html>
