@@ -6,80 +6,80 @@
   <title>Login - ClassicalForum</title>
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
       background-color: #000;
       color: #fff;
+      font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      height: 100vh;
+      margin: 0;
     }
-
     .container {
       background-color: #111;
-      padding: 2rem;
+      padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 10px #444;
       text-align: center;
-      width: 90%;
-      max-width: 400px;
     }
-
-    h1 {
-      margin-bottom: 1rem;
-    }
-
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0;
-      border: none;
-      border-radius: 5px;
+    input {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 200px;
       background-color: #222;
       color: #fff;
+      border: 1px solid #555;
+      border-radius: 5px;
     }
-
     button {
-      padding: 0.75rem 1.5rem;
-      background-color: #444;
+      background-color: #555;
+      color: #fff;
+      padding: 10px 20px;
       border: none;
       border-radius: 5px;
-      color: #fff;
       cursor: pointer;
-      margin-top: 1rem;
+      margin: 5px;
     }
-
     button:hover {
-      background-color: #666;
+      background-color: #777;
     }
-
-    a {
-      color: #09f;
-      text-decoration: none;
-      margin-top: 1rem;
-      display: inline-block;
-    }
-
-    a:hover {
+    .home-link {
+      margin-top: 10px;
+      color: #ccc;
       text-decoration: underline;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Login</h1>
-    <input type="text" id="username" placeholder="Username" />
-    <input type="password" id="password" placeholder="Password" />
+    <h2>Login to ClassicalForum</h2>
+    <input type="text" id="username" placeholder="Username"/>
+    <input type="password" id="password" placeholder="Password"/>
     <button onclick="login()">Login</button>
-    <br />
-    <a href="index.html">← Back to Home</a>
+    <div class="home-link" onclick="goHome()">← Go Home</div>
   </div>
 
   <script>
-    async function login() {
+    const specialAccounts = {
+      Developer: { password: "admin01", role: "developer" },
+      Administrator: { password: "admin01", role: "admin" },
+      Moderator: { password: "admin01", role: "mod" }
+    };
+
+    let storedUsers = JSON.parse(localStorage.getItem("users")) || {};
+
+    for (const [username, data] of Object.entries(specialAccounts)) {
+      if (!storedUsers[username]) {
+        storedUsers[username] = { password: data.password, role: data.role };
+      }
+    }
+
+    localStorage.setItem("users", JSON.stringify(storedUsers));
+
+    function login() {
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
 
@@ -88,7 +88,7 @@
         return;
       }
 
-      const storedUsers = JSON.parse(localStorage.getItem("users")) || {};
+      storedUsers = JSON.parse(localStorage.getItem("users")) || {};
       const user = storedUsers[username];
 
       if (user && user.password === password) {
@@ -97,6 +97,10 @@
       } else {
         alert("Invalid username or password.");
       }
+    }
+
+    function goHome() {
+      window.location.href = "index.html";
     }
   </script>
 </body>
