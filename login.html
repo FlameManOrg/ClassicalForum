@@ -2,73 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - ClassicalForum</title>
   <style>
     body {
-      background-color: #121212;
-      color: white;
+      margin: 0;
       font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
+      min-height: 100vh;
     }
 
     .container {
-      background-color: #1e1e1e;
-      padding: 30px 40px;
-      border-radius: 12px;
+      background-color: #111;
+      padding: 2rem;
+      border-radius: 10px;
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-      width: 320px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
     }
 
     h1 {
-      margin-bottom: 20px;
-      text-align: center;
+      margin-bottom: 1rem;
     }
 
-    input, button {
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
-      padding: 12px 10px;
-      margin: 8px 0;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-
-    input {
-      background-color: #2c2c2c;
-      color: white;
+      border-radius: 5px;
+      background-color: #222;
+      color: #fff;
     }
 
     button {
-      background-color: #3a86ff;
-      color: white;
-      font-weight: bold;
+      padding: 0.75rem 1.5rem;
+      background-color: #444;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      margin-top: 1rem;
     }
 
     button:hover {
-      background-color: #5fa0ff;
-    }
-
-    .error {
-      color: #ff4c4c;
-      margin-top: 10px;
-      text-align: center;
+      background-color: #666;
     }
 
     a {
-      display: block;
-      margin-top: 15px;
-      color: #3a86ff;
-      text-align: center;
+      color: #09f;
       text-decoration: none;
-      font-weight: bold;
+      margin-top: 1rem;
+      display: inline-block;
     }
 
     a:hover {
@@ -79,65 +71,32 @@
 <body>
   <div class="container">
     <h1>Login</h1>
-    <input id="username" type="text" placeholder="Username" />
-    <input id="password" type="password" placeholder="Password" />
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
     <button onclick="login()">Login</button>
-    <div id="message"></div>
-    <a href="signup.html">Don't have an account? Sign up</a>
+    <br />
+    <a href="index.html">← Back to Home</a>
   </div>
 
   <script>
-    function login() {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const message = document.getElementById('message');
+    async function login() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
 
       if (!username || !password) {
-        message.textContent = 'Please enter username and password.';
-        message.className = 'error';
+        alert("Please enter both username and password.");
         return;
       }
 
-      // Check for special admin/mod/dev accounts
-      const specialAccounts = {
-        Developer: 'admin01',
-        Administrator: 'admin01',
-        Moderator: 'admin01'
-      };
+      const storedUsers = JSON.parse(localStorage.getItem("users")) || {};
+      const user = storedUsers[username];
 
-      if (specialAccounts[username]) {
-        if (password === specialAccounts[username]) {
-          // Save special user in sessionStorage
-          sessionStorage.setItem('loggedInUser', username);
-          sessionStorage.setItem('role', username);
-          window.location.href = 'forums.html';
-          return;
-        } else {
-          message.textContent = 'Incorrect password.';
-          message.className = 'error';
-          return;
-        }
+      if (user && user.password === password) {
+        localStorage.setItem("loggedInUser", username);
+        window.location.href = "index.html";
+      } else {
+        alert("Invalid username or password.");
       }
-
-      // Regular user check in localStorage
-      const userData = localStorage.getItem('user_' + username);
-      if (!userData) {
-        message.textContent = 'User not found.';
-        message.className = 'error';
-        return;
-      }
-
-      const user = JSON.parse(userData);
-      if (user.password !== password) {
-        message.textContent = 'Incorrect password.';
-        message.className = 'error';
-        return;
-      }
-
-      // Login success
-      sessionStorage.setItem('loggedInUser', username);
-      sessionStorage.setItem('role', 'user');
-      window.location.href = 'forums.html';
     }
   </script>
 </body>
