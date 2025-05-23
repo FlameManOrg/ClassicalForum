@@ -1,0 +1,48 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #222;
+  color: white;
+  padding: 10px 20px;
+}
+header h1 {
+  margin: 0 10px 0 0;
+  font-size: 24px;
+}
+.left, .right {
+  display: flex;
+  align-items: center;
+}
+button {
+  margin: 0 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.settings {
+  position: relative;
+}
+.settings img {
+  width: 24px;
+  cursor: pointer;
+}
+.dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 30px;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+.logout {
+  color: red;
+}
+.settings:hover .dropdown {
+  display: block;
+}
