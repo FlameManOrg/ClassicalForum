@@ -1,52 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Forum - ClassicalForum</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  #chat-box {
-    border: 1px solid #ccc;
-    height: 300px;
-    overflow-y: auto;
-    padding: 10px;
-    background: #f9f9f9;
-    margin-bottom: 10px;
-  }
-  #message-input {
-    width: calc(100% - 90px);
-    padding: 8px;
-  }
-  #send-btn {
-    padding: 8px;
-    width: 70px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>ClassicalForum - Forums</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f4f4f4;
+    }
+    #chat-box {
+      border: 1px solid #ccc;
+      height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+      background: white;
+      margin-bottom: 10px;
+    }
+    #message-input {
+      width: 80%;
+      padding: 8px;
+      font-size: 14px;
+    }
+    #send-btn {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+    #header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    #header h2 {
+      margin: 0;
+    }
+  </style>
 </head>
 <body>
+  <div id="header">
+    <h2>ClassicalForum - Forums</h2>
+    <button id="logout-btn">Logout</button>
+  </div>
 
-<h2>Welcome to the Forum</h2>
-<p id="welcome-msg"></p>
+  <div id="chat-box"></div>
 
-<div id="chat-box"></div>
-<input type="text" id="message-input" placeholder="Type message here..." />
-<button id="send-btn">Send</button>
+  <input type="text" id="message-input" placeholder="Type your message here..." />
+  <button id="send-btn">Send</button>
 
-<script>
-  // Redirect if not logged in
-  const user = localStorage.getItem('loggedInUser');
-  if (!user) {
-    alert('You must be logged in to enter the forum.');
-    location.href = 'login.html';
-  }
+  <script>
+    // Check if user is logged in
+    const user = localStorage.getItem('loggedInUser');
+    if (!user) {
+      alert('You must be logged in to access the forums.');
+      window.location.href = 'index.html';
+    }
 
-  document.getElementById('welcome-msg').textContent = `Hello, ${user}!`;
+    const chatBox = document.getElementById('chat-box');
+    const input = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    const logoutBtn = document.getElementById('logout-btn');
 
-  const chatBox = document.getElementBy
+    // Load existing chat messages from localStorage or empty array
+    let chatMessages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+
+    // Render messages inside chat box
+    function renderMessages() {
+      chatBox.innerHTML = '';
+      chatMessages.forEach(msg => {
+        const div = document.createElement('div');
+        div.textContent = `${msg.user}: ${msg.text}`;
+        chatBox.appendChild(div);
+      });
+      chatBox.scrollTop = chatBox.scrollHeight; // Scroll to bottom
+    }
+
+    // Send message handler
+    sendBtn.onclick = () => {
+      const text = input.value.trim();
+      if (!text) return;
+      chatMessages.push({ user, text });
+      localStorage.setItem('chatMessages', JSON.stringify(chatMessages));
+      input.value = '';
+      renderMessages();
+    };
+
+    // Also allow pressing Enter key to send message
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendBtn.onclick();
+    });
+
+    // Logout button clears login and sends to index
+    logoutBtn.onclick = () => {
+      localStorage.removeItem('loggedInUser');
+      window.location.href = 'index.html';
+    };
+
+    renderMessages();
+  </script>
+</body>
+</html>
