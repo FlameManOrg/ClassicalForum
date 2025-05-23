@@ -1,36 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ClassicalForum</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ClassicalForum Login/Signup</title>
+<script type="module">
+// Import Firebase SDK functions
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+// Your Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDshvpsAN2oXfl6_0BNrzvwjKotJomB-hU",
+  authDomain: "flame-fb774.firebaseapp.com",
+  projectId: "flame-fb774",
+  storageBucket: "flame-fb774.firebasestorage.app",
+  messagingSenderId: "959179533406",
+  appId: "1:959179533406:web:5bd238c96eebb6c9db58cf"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Signup function
+window.signup = function() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  if (!email || !password) {
+    alert("Please enter email and password");
+    return;
+  }
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(userCredential => {
+      alert("Signup successful! Welcome, " + userCredential.user.email);
+      // Redirect or update UI here
+    })
+    .catch(error => {
+      alert("Signup error: " + error.message);
+    });
+};
+
+// Login function
+window.login = function() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  if (!email || !password) {
+    alert("Please enter email and password");
+    return;
+  }
+  signInWithEmailAndPassword(auth, email, password)
+    .then(userCredential => {
+      alert("Login successful! Welcome back, " + userCredential.user.email);
+      // Redirect or update UI here
+    })
+    .catch(error => {
+      alert("Login error: " + error.message);
+    });
+};
+</script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 1rem;
+    text-align: center;
+  }
+  input {
+    display: block;
+    width: 100%;
+    margin: 0.5rem 0 1rem 0;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  button {
+    margin: 0.5rem;
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+</style>
 </head>
 <body>
-  <header>
-    <div class="left">
-      <h1>ClassicalForum</h1>
-      <button id="forumsBtn">Forums</button>
-      <button id="panelBtn" style="display: none;"></button>
-    </div>
-    <div class="right">
-      <button id="loginBtn">Login</button>
-      <button id="signupBtn">Sign Up</button>
-      <div class="settings" id="settingsBtn" style="display: none;">
-        <img src="https://img.icons8.com/ios-filled/50/settings.png" />
-        <div class="dropdown" id="settingsDropdown">
-          <button id="logoutBtn" class="logout">Logout</button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <h2>Welcome to ClassicalForum</h2>
-  </main>
-
-  <script src="script.js"></script>
+<h1>ClassicalForum</h1>
+<input id="email" type="email" placeholder="Email" />
+<input id="password" type="password" placeholder="Password" />
+<button onclick="signup()">Sign Up</button>
+<button onclick="login()">Login</button>
 </body>
 </html>
