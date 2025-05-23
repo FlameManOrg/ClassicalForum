@@ -1,111 +1,161 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>ClassicalForum Simple Login</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 400px;
-      margin: 2rem auto;
-      text-align: center;
-    }
-    input {
-      display: block;
-      width: 100%;
-      padding: 0.5rem;
-      margin: 0.5rem 0 1rem;
-      font-size: 1rem;
-    }
-    button {
-      padding: 0.7rem 1.5rem;
-      font-size: 1rem;
-      margin: 0 0.5rem;
-      cursor: pointer;
-    }
-    #welcome {
-      margin-top: 2rem;
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ClassicalForum</title>
+<style>
+  body {
+    margin: 0; font-family: Arial, sans-serif;
+    display: flex; justify-content: space-between; align-items: center;
+    height: 50px; background: #222; color: white;
+    padding: 0 10px;
+  }
+  #left-menu, #right-menu {
+    display: flex; align-items: center; gap: 10px;
+  }
+  button, #hamburger {
+    background: none; border: none; color: white; font-size: 16px; cursor: pointer;
+  }
+  #hamburger {
+    font-size: 20px;
+    user-select: none;
+  }
+  #settings-menu {
+    position: absolute; top: 50px; right: 10px; background: #333; border: 1px solid #555;
+    display: none; flex-direction: column; width: 120px;
+  }
+  #settings-menu button {
+    border: none; background: none; color: white; padding: 10px;
+    text-align: left; cursor: pointer;
+  }
+  #settings-menu button.red {
+    color: #ff5555;
+  }
+  #panel-btn {
+    background: #444; border-radius: 4px; padding: 4px 8px;
+  }
+</style>
 </head>
 <body>
-  <h1>ClassicalForum</h1>
 
-  <input id="username" placeholder="Username" />
-  <input id="password" type="password" placeholder="Password" />
+<div id="left-menu">
+  <div id="hamburger">☰</div>
+  <button id="forums-btn">Forums</button>
+  <button id="panel-btn" style="display:none;">Panel</button>
+</div>
 
-  <button onclick="signup()">Sign Up</button>
-  <button onclick="login()">Login</button>
+<div id="right-menu">
+  <button id="signup-btn">Sign Up</button>
+  <button id="login-btn">Login</button>
 
-  <div id="welcome"></div>
+  <div style="position:relative;">
+    <button id="settings-btn" style="display:none;">⚙️</button>
+    <div id="settings-menu">
+      <button id="logout-btn" class="red">Logout</button>
+      <button id="delete-btn" class="red">Delete Account</button>
+    </div>
+  </div>
+</div>
 
-  <script>
-    // Save users in localStorage as an object: { username: password }
-    function getUsers() {
-      return JSON.parse(localStorage.getItem('users') || '{}');
-    }
+<script>
+  // Special accounts & passwords
+  const specialAccounts = {
+    Developer: "admin01",
+    Administrator: "admin01",
+    Moderator: "admin01"
+  };
 
-    function saveUsers(users) {
-      localStorage.setItem('users', JSON.stringify(users));
-    }
+  // Get DOM elements
+  const signupBtn = document.getElementById('signup-btn');
+  const loginBtn = document.getElementById('login-btn');
+  const forumsBtn = document.getElementById('forums-btn');
+  const settingsBtn = document.getElementById('settings-btn');
+  const settingsMenu = document.getElementById('settings-menu');
+  const logoutBtn = document.getElementById('logout-btn');
+  const deleteBtn = document.getElementById('delete-btn');
+  const panelBtn = document.getElementById('panel-btn');
 
-    function signup() {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
+  // Utility: get logged in user from localStorage
+  function getLoggedInUser() {
+    return localStorage.getItem('loggedInUser');
+  }
 
-      if (!username || !password) {
-        alert('Please enter username and password');
-        return;
-      }
+  // Show/hide UI based on login state
+  function updateUI() {
+    const user = getLoggedInUser();
 
-      const users = getUsers();
+    if (user) {
+      signupBtn.style.display = 'none';
+      loginBtn.style.display = 'none';
+      settingsBtn.style.display = 'inline-block';
 
-      if (users[username]) {
-        alert('Username already exists!');
-        return;
-      }
-
-      users[username] = password;
-      saveUsers(users);
-      alert('Signup successful! You can now login.');
-      clearInputs();
-    }
-
-    function login() {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!username || !password) {
-        alert('Please enter username and password');
-        return;
-      }
-
-      const users = getUsers();
-
-      if (users[username] && users[username] === password) {
-        document.getElementById('welcome').textContent = `Welcome, ${username}! You are logged in.`;
-        clearInputs();
-        // You can save logged in user for session
-        localStorage.setItem('loggedInUser', username);
+      // Show Panel button if special account
+      if (specialAccounts.hasOwnProperty(user)) {
+        panelBtn.style.display = 'inline-block';
       } else {
-        alert('Invalid username or password');
+        panelBtn.style.display = 'none';
       }
+    } else {
+      signupBtn.style.display = 'inline-block';
+      loginBtn.style.display = 'inline-block';
+      settingsBtn.style.display = 'none';
+      panelBtn.style.display = 'none';
+    }
+    settingsMenu.style.display = 'none'; // Hide settings on update
+  }
+
+  // Redirect helpers
+  signupBtn.onclick = () => location.href = 'signup.html';
+  loginBtn.onclick = () => location.href = 'login.html';
+  forumsBtn.onclick = () => {
+    if (getLoggedInUser()) {
+      location.href = 'forum.html';
+    } else {
+      location.href = 'login.html';
+    }
+  };
+  panelBtn.onclick = () => location.href = 'panel.html';
+
+  // Settings toggle
+  settingsBtn.onclick = () => {
+    settingsMenu.style.display = settingsMenu.style.display === 'flex' ? 'none' : 'flex';
+  };
+
+  // Logout
+  logoutBtn.onclick = () => {
+    localStorage.removeItem('loggedInUser');
+    updateUI();
+    alert('Logged out');
+  };
+
+  // Delete Account
+  deleteBtn.onclick = () => {
+    const user = getLoggedInUser();
+    if (!user) return;
+
+    // Remove account from storage if not special account
+    if (!specialAccounts.hasOwnProperty(user)) {
+      let accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+      delete accounts[user];
+      localStorage.setItem('accounts', JSON.stringify(accounts));
     }
 
-    function clearInputs() {
-      document.getElementById('username').value = '';
-      document.getElementById('password').value = '';
-    }
+    localStorage.removeItem('loggedInUser');
+    updateUI();
+    alert('Account deleted and logged out');
+  };
 
-    // Auto-login if user already logged in
-    window.onload = function() {
-      const loggedInUser = localStorage.getItem('loggedInUser');
-      if (loggedInUser) {
-        document.getElementById('welcome').textContent = `Welcome back, ${loggedInUser}! You are logged in.`;
-      }
+  // Initial UI setup
+  updateUI();
+
+  // Hide settings if clicked outside
+  document.body.onclick = (e) => {
+    if (!settingsBtn.contains(e.target) && !settingsMenu.contains(e.target)) {
+      settingsMenu.style.display = 'none';
     }
-  </script>
+  };
+</script>
+
 </body>
 </html>
