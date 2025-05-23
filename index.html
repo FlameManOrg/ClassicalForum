@@ -6,110 +6,260 @@
   <title>ClassicalForum</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      background: #f0f0f0;
-      color: #333;
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #eee;
     }
     header {
       display: flex;
       align-items: center;
-      background-color: #222;
-      color: white;
+      justify-content: space-between;
       padding: 10px 20px;
-      gap: 15px;
+      background-color: #1f1f1f;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .hamburger {
+    .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .menu-icon {
+      font-size: 24px;
       cursor: pointer;
+      user-select: none;
+    }
+    h1 {
+      margin: 0;
       font-size: 24px;
       user-select: none;
     }
-    button {
-      background-color: #444;
+    nav button {
+      margin-left: 10px;
+      padding: 6px 12px;
+      background: #282828;
       border: none;
-      padding: 8px 16px;
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
       border-radius: 4px;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #666;
-    }
-    .title {
-      font-weight: bold;
-      font-size: 20px;
-      margin-right: auto;
+      color: #eee;
+      cursor: pointer;
+      font-size: 14px;
       user-select: none;
     }
-    main {
-      padding: 30px 20px;
-      max-width: 900px;
-      margin: auto;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      margin-top: 30px;
+    nav button:hover {
+      background: #444;
     }
-    h2 {
-      margin-top: 0;
+    .right-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
     }
-    .updates {
-      background-color: #e7f3ff;
-      border-left: 6px solid #2196F3;
-      padding: 15px;
-      margin-top: 20px;
+    #settings-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #eee;
+      font-size: 18px;
+      user-select: none;
+      position: relative;
+    }
+    #settings-menu {
+      display: none;
+      position: absolute;
+      top: 32px;
+      right: 0;
+      background: #222;
+      border: 1px solid #444;
       border-radius: 4px;
+      min-width: 140px;
+      z-index: 101;
+    }
+    #settings-menu button {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      background: none;
+      border: none;
+      color: #eee;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #settings-menu button:hover {
+      background: #555;
+    }
+    #settings-menu .danger {
+      color: #f44336;
+    }
+    #updates {
+      max-width: 600px;
+      margin: 40px auto 0;
+      padding: 0 20px;
       font-size: 16px;
+      line-height: 1.5;
+      background: #222;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="hamburger" title="Menu">&#9776;</div>
-    <div class="title">ClassicalForum</div>
-    <button id="homeBtn">Home</button>
-    <button id="forumsBtn">Forums</button>
-    <!-- You can add Login/Signup buttons here as before -->
+    <div class="left">
+      <div class="menu-icon" title="Menu">&#9776;</div>
+      <h1>ClassicalForum</h1>
+      <nav>
+        <button id="homeBtn">Home</button>
+        <button id="forumsBtn">Forums</button>
+      </nav>
+    </div>
+
+    <div class="right-buttons" id="authButtons">
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn">Sign Up</button>
+      <button id="settings-btn" title="Settings">&#9881;</button>
+      <div id="settings-menu">
+        <button id="logoutBtn" class="danger">Logout</button>
+        <button id="deleteAccountBtn" class="danger">Delete Account</button>
+      </div>
+    </div>
   </header>
 
-  <main id="mainContent">
-    <h1>Welcome to ClassicalForum!</h1>
-    <div class="updates">
-      <h2>Latest Updates</h2>
-      <ul>
-        <li>Update 1. Made the website and expect cool things.</li>
-        <li>Update 2. Real-time chat coming soon.</li>
-        <li>Update 3. New features will be announced here.</li>
-      </ul>
-    </div>
-  </main>
+  <section id="updates">
+    <h2>Updates</h2>
+    <ul>
+      <li>Update 1: Made the website and expect cool things</li>
+      <li>Update 2: Added Home button and settings menu</li>
+      <!-- Add more updates here -->
+    </ul>
+  </section>
 
   <script>
-    const homeBtn = document.getElementById('homeBtn');
-    const forumsBtn = document.getElementById('forumsBtn');
-    const mainContent = document.getElementById('mainContent');
+    const authButtons = document.getElementById("authButtons");
+    const settingsBtn = document.getElementById("settings-btn");
+    const settingsMenu = document.getElementById("settings-menu");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const deleteAccountBtn = document.getElementById("deleteAccountBtn");
+    const loginBtn = document.getElementById("loginBtn");
+    const signupBtn = document.getElementById("signupBtn");
+    const forumsBtn = document.getElementById("forumsBtn");
+    const homeBtn = document.getElementById("homeBtn");
 
-    homeBtn.onclick = () => {
-      // Show home content (you can expand this)
-      mainContent.innerHTML = `
-        <h1>Welcome to ClassicalForum!</h1>
-        <div class="updates">
-          <h2>Latest Updates</h2>
-          <ul>
-            <li>Update 1. Made the website and expect cool things.</li>
-            <li>Update 2. Real-time chat coming soon.</li>
-            <li>Update 3. New features will be announced here.</li>
-          </ul>
-        </div>
-      `;
-    };
+    // Toggle settings menu
+    settingsBtn.addEventListener("click", () => {
+      settingsMenu.style.display =
+        settingsMenu.style.display === "block" ? "none" : "block";
+    });
 
-    forumsBtn.onclick = () => {
-      // Redirect to forums page or load forum content (placeholder)
-      window.location.href = "forum.html"; // or dynamically load forum here
-    };
+    // Hide settings menu if clicked outside
+    window.addEventListener("click", (e) => {
+      if (!settingsBtn.contains(e.target) && !settingsMenu.contains(e.target)) {
+        settingsMenu.style.display = "none";
+      }
+    });
+
+    // Simulate auth state with localStorage
+    function getCurrentUser() {
+      return JSON.parse(localStorage.getItem("currentUser"));
+    }
+
+    function setCurrentUser(user) {
+      localStorage.setItem("currentUser", JSON.stringify(user));
+    }
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      updateUI();
+      alert("Logged out!");
+    }
+
+    function deleteAccount() {
+      const user = getCurrentUser();
+      if (!user) return alert("No user logged in");
+      // Remove user from localStorage users list
+      let users = JSON.parse(localStorage.getItem("users") || "[]");
+      users = users.filter((u) => u.username !== user.username);
+      localStorage.setItem("users", JSON.stringify(users));
+      logout();
+      alert("Account deleted!");
+    }
+
+    // Update UI based on login state
+    function updateUI() {
+      const user = getCurrentUser();
+
+      if (user) {
+        // Hide login/signup, show settings button
+        loginBtn.style.display = "none";
+        signupBtn.style.display = "none";
+        settingsBtn.style.display = "inline";
+        settingsMenu.style.display = "none";
+
+        // Add panel button for special roles
+        let panelBtn = document.getElementById("panelBtn");
+        if (
+          ["Developer", "Administrator", "Moderator"].includes(user.username)
+        ) {
+          if (!panelBtn) {
+            panelBtn = document.createElement("button");
+            panelBtn.id = "panelBtn";
+            panelBtn.textContent = user.username + " Panel";
+            panelBtn.style.marginLeft = "10px";
+            panelBtn.onclick = () => {
+              alert("Nothing here, yet");
+            };
+            forumsBtn.insertAdjacentElement("afterend", panelBtn);
+          }
+        } else {
+          if (panelBtn) panelBtn.remove();
+        }
+      } else {
+        // Show login/signup, hide settings button and panel button
+        loginBtn.style.display = "inline";
+        signupBtn.style.display = "inline";
+        settingsBtn.style.display = "none";
+        settingsMenu.style.display = "none";
+
+        const panelBtn = document.getElementById("panelBtn");
+        if (panelBtn) panelBtn.remove();
+      }
+    }
+
+    // Navigation buttons
+    homeBtn.addEventListener("click", () => {
+      alert("You are already on the Home page.");
+    });
+
+    forumsBtn.addEventListener("click", () => {
+      const user = getCurrentUser();
+      if (!user) {
+        alert("You need to log in first!");
+        window.location.href = "login.html"; // your login page
+      } else {
+        window.location.href = "forums.html"; // your forums page
+      }
+    });
+
+    loginBtn.addEventListener("click", () => {
+      window.location.href = "login.html";
+    });
+
+    signupBtn.addEventListener("click", () => {
+      window.location.href = "signup.html";
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      logout();
+    });
+
+    deleteAccountBtn.addEventListener("click", () => {
+      if (confirm("Are you sure you want to delete your account?")) {
+        deleteAccount();
+      }
+    });
+
+    updateUI();
   </script>
 </body>
 </html>
