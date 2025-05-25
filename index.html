@@ -1,265 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
   <title>ClassicalForum</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #eee;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 20px;
-      background-color: #1f1f1f;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .menu-icon {
-      font-size: 24px;
-      cursor: pointer;
-      user-select: none;
-    }
-    h1 {
-      margin: 0;
-      font-size: 24px;
-      user-select: none;
-    }
-    nav button {
-      margin-left: 10px;
-      padding: 6px 12px;
-      background: #282828;
-      border: none;
-      border-radius: 4px;
-      color: #eee;
-      cursor: pointer;
-      font-size: 14px;
-      user-select: none;
-    }
-    nav button:hover {
-      background: #444;
-    }
-    .right-buttons {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      position: relative;
-    }
-    #settings-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #eee;
-      font-size: 18px;
-      user-select: none;
-      position: relative;
-    }
-    #settings-menu {
-      display: none;
-      position: absolute;
-      top: 32px;
-      right: 0;
-      background: #222;
-      border: 1px solid #444;
-      border-radius: 4px;
-      min-width: 140px;
-      z-index: 101;
-    }
-    #settings-menu button {
-      display: block;
-      width: 100%;
-      padding: 8px 12px;
-      background: none;
-      border: none;
-      color: #eee;
-      text-align: left;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    #settings-menu button:hover {
-      background: #555;
-    }
-    #settings-menu .danger {
-      color: #f44336;
-    }
-    #updates {
-      max-width: 600px;
-      margin: 40px auto 0;
-      padding: 0 20px;
-      font-size: 16px;
-      line-height: 1.5;
-      background: #222;
-      border-radius: 6px;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
+  <!-- Header -->
+  <header class="header">
     <div class="left">
-      <div class="menu-icon" title="Menu">&#9776;</div>
       <h1>ClassicalForum</h1>
-      <nav>
-        <button id="homeBtn">Home</button>
-        <button id="forumsBtn">Forums</button>
-      </nav>
+      <button onclick="goToForum()">Forums</button>
     </div>
 
-    <div class="right-buttons" id="authButtons">
-      <button id="loginBtn">Login</button>
-      <button id="signupBtn">Sign Up</button>
-      <button id="settings-btn" title="Settings">&#9881;</button>
-      <div id="settings-menu">
-        <button id="logoutBtn" class="danger">Logout</button>
-        <button id="deleteAccountBtn" class="danger">Delete Account</button>
+    <div class="right">
+      <button id="signupNavBtn" onclick="goToSignup()">Sign Up</button>
+      <button id="loginNavBtn" onclick="goToLogin()">Login</button>
+
+      <!-- Settings Icon -->
+      <div id="settingsIcon" style="display: none; position: relative;">
+        <button onclick="toggleSettings()">⚙️</button>
+        <div id="settingsDropdown" style="display: none;" class="dropdown">
+          <button onclick="showAccountTab()">Account</button>
+          <button id="logoutBtn" style="color: red;">Logout</button>
+        </div>
       </div>
     </div>
   </header>
 
-  <section id="updates">
-    <h2>Updates</h2>
-    <ul>
-      <li>Update 1: Made the website and expect cool things</li>
-      <li>Update 2: Added Home button and settings menu</li>
-      <!-- Add more updates here -->
-    </ul>
-  </section>
+  <!-- Main Content -->
+  <main>
+    <h2>Welcome to ClassicalForum!</h2>
+    <p>A retro-styled place to share ideas and chat with friends.</p>
+    
+    <!-- Account Tab (Hidden until triggered) -->
+    <div id="accountTab" style="display:none; margin-top: 20px;">
+      <h3>Account</h3>
+      <p>Your ID: <span id="uniqueIDText">Loading...</span></p>
+    </div>
+  </main>
 
+  <!-- Scripts -->
+  <script type="module" src="script.js"></script>
   <script>
-    const authButtons = document.getElementById("authButtons");
-    const settingsBtn = document.getElementById("settings-btn");
-    const settingsMenu = document.getElementById("settings-menu");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const deleteAccountBtn = document.getElementById("deleteAccountBtn");
-    const loginBtn = document.getElementById("loginBtn");
-    const signupBtn = document.getElementById("signupBtn");
-    const forumsBtn = document.getElementById("forumsBtn");
-    const homeBtn = document.getElementById("homeBtn");
-
-    // Toggle settings menu
-    settingsBtn.addEventListener("click", () => {
-      settingsMenu.style.display =
-        settingsMenu.style.display === "block" ? "none" : "block";
-    });
-
-    // Hide settings menu if clicked outside
-    window.addEventListener("click", (e) => {
-      if (!settingsBtn.contains(e.target) && !settingsMenu.contains(e.target)) {
-        settingsMenu.style.display = "none";
-      }
-    });
-
-    // Simulate auth state with localStorage
-    function getCurrentUser() {
-      return JSON.parse(localStorage.getItem("currentUser"));
-    }
-
-    function setCurrentUser(user) {
-      localStorage.setItem("currentUser", JSON.stringify(user));
-    }
-
-    function logout() {
-      localStorage.removeItem("currentUser");
-      updateUI();
-      alert("Logged out!");
-    }
-
-    function deleteAccount() {
-      const user = getCurrentUser();
-      if (!user) return alert("No user logged in");
-      // Remove user from localStorage users list
-      let users = JSON.parse(localStorage.getItem("users") || "[]");
-      users = users.filter((u) => u.username !== user.username);
-      localStorage.setItem("users", JSON.stringify(users));
-      logout();
-      alert("Account deleted!");
-    }
-
-    // Update UI based on login state
-    function updateUI() {
-      const user = getCurrentUser();
-
-      if (user) {
-        // Hide login/signup, show settings button
-        loginBtn.style.display = "none";
-        signupBtn.style.display = "none";
-        settingsBtn.style.display = "inline";
-        settingsMenu.style.display = "none";
-
-        // Add panel button for special roles
-        let panelBtn = document.getElementById("panelBtn");
-        if (
-          ["Developer", "Administrator", "Moderator"].includes(user.username)
-        ) {
-          if (!panelBtn) {
-            panelBtn = document.createElement("button");
-            panelBtn.id = "panelBtn";
-            panelBtn.textContent = user.username + " Panel";
-            panelBtn.style.marginLeft = "10px";
-            panelBtn.onclick = () => {
-              alert("Nothing here, yet");
-            };
-            forumsBtn.insertAdjacentElement("afterend", panelBtn);
-          }
-        } else {
-          if (panelBtn) panelBtn.remove();
-        }
-      } else {
-        // Show login/signup, hide settings button and panel button
-        loginBtn.style.display = "inline";
-        signupBtn.style.display = "inline";
-        settingsBtn.style.display = "none";
-        settingsMenu.style.display = "none";
-
-        const panelBtn = document.getElementById("panelBtn");
-        if (panelBtn) panelBtn.remove();
-      }
-    }
-
-    // Navigation buttons
-    homeBtn.addEventListener("click", () => {
-      alert("You are already on the Home page.");
-    });
-
-    forumsBtn.addEventListener("click", () => {
-      const user = getCurrentUser();
-      if (!user) {
-        alert("You need to log in first!");
-        window.location.href = "login.html"; // your login page
-      } else {
-        window.location.href = "forums.html"; // your forums page
-      }
-    });
-
-    loginBtn.addEventListener("click", () => {
-      window.location.href = "login.html";
-    });
-
-    signupBtn.addEventListener("click", () => {
+    // Page navigation functions
+    function goToSignup() {
       window.location.href = "signup.html";
-    });
+    }
 
-    logoutBtn.addEventListener("click", () => {
-      logout();
-    });
+    function goToLogin() {
+      window.location.href = "login.html";
+    }
 
-    deleteAccountBtn.addEventListener("click", () => {
-      if (confirm("Are you sure you want to delete your account?")) {
-        deleteAccount();
-      }
-    });
+    function goToForum() {
+      window.location.href = "forum.html"; // create this page later
+    }
 
-    updateUI();
+    // Toggle settings dropdown
+    function toggleSettings() {
+      const dropdown = document.getElementById("settingsDropdown");
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
   </script>
 </body>
 </html>
