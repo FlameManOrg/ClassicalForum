@@ -1,67 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ClassicalForum</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ClassicalForum - Home</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="left">
-      <h1>ClassicalForum</h1>
-      <button onclick="goToForum()">Forums</button>
-    </div>
-
-    <div class="right">
-      <button id="signupNavBtn" onclick="goToSignup()">Sign Up</button>
-      <button id="loginNavBtn" onclick="goToLogin()">Login</button>
-
-      <!-- Settings Icon -->
-      <div id="settingsIcon" style="display: none; position: relative;">
-        <button onclick="toggleSettings()">⚙️</button>
-        <div id="settingsDropdown" style="display: none;" class="dropdown">
-          <button onclick="showAccountTab()">Account</button>
-          <button id="logoutBtn" style="color: red;">Logout</button>
-        </div>
-      </div>
-    </div>
+  <header>
+    <nav>
+      <a href="index.html" id="homeBtn">Home</a>
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn">Sign Up</button>
+      <button id="settingsBtn" style="display:none;">Settings</button>
+      <button id="panelBtn" style="display:none;">Panel</button>
+    </nav>
   </header>
 
-  <!-- Main Content -->
   <main>
-    <h2>Welcome to ClassicalForum!</h2>
-    <p>A retro-styled place to share ideas and chat with friends.</p>
-    
-    <!-- Account Tab (Hidden until triggered) -->
-    <div id="accountTab" style="display:none; margin-top: 20px;">
-      <h3>Account</h3>
-      <p>Your ID: <span id="uniqueIDText">Loading...</span></p>
-    </div>
+    <h1>Welcome to ClassicalForum</h1>
+    <p>This is your forum homepage.</p>
   </main>
 
-  <!-- Scripts -->
   <script type="module" src="script.js"></script>
-  <script>
-    // Page navigation functions
-    function goToSignup() {
-      window.location.href = "signup.html";
-    }
-
-    function goToLogin() {
-      window.location.href = "login.html";
-    }
-
-    function goToForum() {
-      window.location.href = "forum.html"; // create this page later
-    }
-
-    // Toggle settings dropdown
-    function toggleSettings() {
-      const dropdown = document.getElementById("settingsDropdown");
-      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    }
-  </script>
 </body>
 </html>

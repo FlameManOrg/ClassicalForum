@@ -2,87 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Login - ClassicalForum</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - ClassicalForum</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="header">
-    <div class="left">
-      <h1>ClassicalForum</h1>
-      <button onclick="goToHome()">Home</button>
-    </div>
+  <header>
+    <nav>
+      <a href="index.html" id="homeBtn">Home</a>
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn">Sign Up</button>
+      <button id="settingsBtn" style="display:none;">Settings</button>
+      <button id="panelBtn" style="display:none;">Panel</button>
+    </nav>
   </header>
 
   <main>
-    <h2>Login to your account</h2>
+    <h1>Login</h1>
     <form id="loginForm">
-      <input type="text" id="loginUsername" placeholder="Username" required /><br />
-      <input type="password" id="loginPassword" placeholder="Password" required /><br />
-      <button id="loginBtn">Login</button>
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required minlength="6" />
+      <button type="submit">Login</button>
     </form>
+    <p id="errorMsg" style="color:red;"></p>
   </main>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import {
-      getDatabase,
-      ref,
-      get,
-      query,
-      orderByChild,
-      equalTo,
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDshvpsAN2oXfl6_0BNrzvwjKotJomB-hU",
-      authDomain: "flame-fb774.firebaseapp.com",
-      databaseURL: "https://flame-fb774-default-rtdb.firebaseio.com",
-      projectId: "flame-fb774",
-      storageBucket: "flame-fb774.firebasestorage.app",
-      messagingSenderId: "959179533406",
-      appId: "1:959179533406:web:5bd238c96eebb6c9db58cf",
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-
-    function generateFakeEmail(username) {
-      return `${username.toLowerCase()}@classicalforum.local`;
-    }
-
-    document.getElementById("loginBtn").addEventListener("click", async (e) => {
-      e.preventDefault();
-
-      const username = document.getElementById("loginUsername").value.trim();
-      const password = document.getElementById("loginPassword").value;
-
-      if (!username || !password) {
-        alert("Please enter username and password.");
-        return;
-      }
-
-      const fakeEmail = generateFakeEmail(username);
-
-      try {
-        await signInWithEmailAndPassword(auth, fakeEmail, password);
-        alert("Login successful!");
-        window.location.href = "index.html";
-      } catch (error) {
-        alert("Login failed: " + error.message);
-      }
-    });
-  </script>
-
-  <script>
-    function goToHome() {
-      window.location.href = "index.html";
-    }
-  </script>
+  <script type="module" src="loginScript.js"></script>
 </body>
 </html>

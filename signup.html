@@ -1,99 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sign Up - ClassicalForum</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="header">
-    <div class="left">
-      <h1>ClassicalForum</h1>
-      <button onclick="goToHome()">Home</button>
-    </div>
+  <header>
+    <nav>
+      <a href="index.html" id="homeBtn">Home</a>
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn">Sign Up</button>
+      <button id="settingsBtn" style="display:none;">Settings</button>
+      <button id="panelBtn" style="display:none;">Panel</button>
+    </nav>
   </header>
 
   <main>
-    <h2>Create an Account</h2>
+    <h1>Sign Up</h1>
     <form id="signupForm">
-      <input type="text" id="signupUsername" placeholder="Username" required><br>
-      <input type="password" id="signupPassword" placeholder="Password" required><br>
-      <button id="signupBtn">Sign Up</button>
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required minlength="6" />
+      <button type="submit">Register</button>
     </form>
+    <p id="errorMsg" style="color:red;"></p>
   </main>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { 
-      getAuth, 
-      createUserWithEmailAndPassword 
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { 
-      getDatabase, 
-      ref, 
-      set 
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDshvpsAN2oXfl6_0BNrzvwjKotJomB-hU",
-      authDomain: "flame-fb774.firebaseapp.com",
-      databaseURL: "https://flame-fb774-default-rtdb.firebaseio.com",
-      projectId: "flame-fb774",
-      storageBucket: "flame-fb774.firebasestorage.app",
-      messagingSenderId: "959179533406",
-      appId: "1:959179533406:web:5bd238c96eebb6c9db58cf"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-
-    function generateFakeEmail(username) {
-      return `${username.toLowerCase()}@classicalforum.local`;
-    }
-
-    function generateUniqueID() {
-      return Math.random().toString(36).substring(2, 10);
-    }
-
-    document.getElementById("signupBtn").addEventListener("click", (e) => {
-      e.preventDefault();
-
-      const username = document.getElementById("signupUsername").value.trim();
-      const password = document.getElementById("signupPassword").value;
-
-      if (!username || !password) {
-        alert("Username and password required.");
-        return;
-      }
-
-      const fakeEmail = generateFakeEmail(username);
-
-      createUserWithEmailAndPassword(auth, fakeEmail, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          const uniqueID = generateUniqueID();
-
-          set(ref(db, 'users/' + user.uid), {
-            username: username,
-            uniqueID: uniqueID,
-            friends: {}
-          }).then(() => {
-            alert("Signup successful!");
-            window.location.href = "index.html";
-          });
-        })
-        .catch((error) => {
-          alert("Signup failed: " + error.message);
-        });
-    });
-  </script>
-
-  <script>
-    function goToHome() {
-      window.location.href = "index.html";
-    }
-  </script>
+  <script type="module" src="signupScript.js"></script>
 </body>
 </html>

@@ -1,32 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Panel - ClassicalForum</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel - ClassicalForum</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <header>
+    <nav>
+      <a href="index.html" id="homeBtn">Home</a>
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn">Sign Up</button>
+      <button id="settingsBtn" style="display:none;">Settings</button>
+      <button id="panelBtn" style="display:none;">Panel</button>
+    </nav>
+  </header>
 
-<h2>Panel</h2>
-<p>Nothing here, yet.</p>
+  <main>
+    <h1>Admin Panel</h1>
+    <p>Nothing here, check soon.</p>
+  </main>
 
-<script>
-  const user = localStorage.getItem('loggedInUser');
-  const specialAccounts = ["Developer", "Administrator", "Moderator"];
-  if (!user || !specialAccounts.includes(user)) {
-    alert('Access denied.');
-    location.href = 'index.html';
-  }
-</script>
-
+  <script type="module" src="script.js"></script>
 </body>
 </html>
