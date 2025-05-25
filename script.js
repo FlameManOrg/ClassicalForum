@@ -1,109 +1,123 @@
-// Firebase config (replace with yours)
+// --- Firebase SDK Imports ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { 
+  getDatabase, 
+  ref, 
+  set, 
+  get 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// --- Your Firebase Config ---
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDshvpsAN2oXfl6_0BNrzvwjKotJomB-hU",
+  authDomain: "flame-fb774.firebaseapp.com",
+  databaseURL: "https://flame-fb774-default-rtdb.firebaseio.com",
+  projectId: "flame-fb774",
+  storageBucket: "flame-fb774.firebasestorage.app",
+  messagingSenderId: "959179533406",
+  appId: "1:959179533406:web:5bd238c96eebb6c9db58cf"
 };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.database();
+// --- Initialize Firebase ---
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
 
-// Sign up logic
-function signup() {
-  const email = document.getElementById("signupEmail").value;
-  const password = document.getElementById("signupPassword").value;
-
-  const roles = {
-    "developer@cf.com": "Developer",
-    "admin@cf.com": "Administrator",
-    "mod@cf.com": "Moderator"
-  };
-
-  const userRole = roles[email] || "User";
-
-  firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then(userCredential => {
-      const uid = userCredential.user.uid;
-      db.ref("users/" + uid).set({ email, role: userRole });
-      alert("Account created!");
-      window.location.href = "index.html";
-    })
-    .catch(error => alert("Signup Error: " + error.message));
+// --- Generate Unique ID ---
+function generateUniqueID() {
+  return Math.random().toString(36).substring(2, 10);
 }
 
-// Login logic
-function login() {
+// --- Signup Handler ---
+document.getElementById("signupBtn")?.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("signupEmail").value;
+  const password = document.getElementById("signupPassword").value;
+  const username = document.getElementById("signupUsername").value;
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      const uniqueID = generateUniqueID();
+
+      // Save to database
+      set(ref(db, 'users/' + user.uid), {
+        email: email,
+        username: username,
+        uniqueID: uniqueID,
+        friends: {}
+      }).then(() => {
+        alert("Signup successful!");
+        window.location.href = "index.html";
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+      alert("Signup failed: " + error.message);
+    });
+});
+
+// --- Login Handler ---
+document.getElementById("loginBtn")?.addEventListener("click", (e) => {
+  e.preventDefault();
+
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
 
-  firebase.auth().signInWithEmailAndPassword(email, password)
+  signInWithEmailAndPassword(auth, email, password)
     .then(() => {
-      alert("Logged in!");
+      alert("Login successful!");
       window.location.href = "index.html";
     })
-    .catch(error => alert("Login Error: " + error.message));
-}
-
-// Auth state
-auth.onAuthStateChanged(user => {
-  if (user) {
-    db.ref("users/" + user.uid).once("value").then(snapshot => {
-      const role = snapshot.val()?.role || "User";
-      document.getElementById("loginBtn")?.remove();
-      document.getElementById("signupBtn")?.remove();
-      document.getElementById("settingsBtn")?.style.display = "block";
-
-      const panelBtn = document.getElementById("panelBtn");
-      if (panelBtn) {
-        if (role === "Developer") {
-          panelBtn.textContent = "Developer Panel";
-          panelBtn.onclick = () => location.href = "developer.html";
-        } else if (role === "Administrator") {
-          panelBtn.textContent = "Admin Panel";
-          panelBtn.onclick = () => location.href = "admin.html";
-        } else if (role === "Moderator") {
-          panelBtn.textContent = "Mod Panel";
-          panelBtn.onclick = () => location.href = "mod.html";
-        }
-        panelBtn.style.display = "inline";
-      }
-
-      document.getElementById("forumsBtn").onclick = () => {
-        location.href = "forum.html";
-      };
+    .catch((error) => {
+      console.error(error);
+      alert("Login failed: " + error.message);
     });
-  } else {
-    document.getElementById("forumsBtn").onclick = () => {
-      location.href = "login.html";
-    };
-  }
 });
 
-// Logout
+// --- Logout Handler ---
 document.getElementById("logoutBtn")?.addEventListener("click", () => {
-  auth.signOut().then(() => location.href = "index.html");
+  signOut(auth)
+    .then(() => {
+      alert("Logged out.");
+      window.location.href = "index.html";
+    });
 });
 
-// Chat logic
-function sendMessage() {
+// --- Show Unique ID in Account Tab ---
+function showAccountTab() {
   const user = auth.currentUser;
-  if (!user) return alert("Login first!");
-  const message = document.getElementById("messageInput").value;
-  db.ref("messages").push({ user: user.email, text: message });
-  document.getElementById("messageInput").value = "";
-}
+  if (!user) return;
 
-const chatBox = document.getElementById("chatBox");
-if (chatBox) {
-  db.ref("messages").on("child_added", snapshot => {
-    const msg = snapshot.val();
-    const div = document.createElement("div");
-    div.textContent = `${msg.user}: ${msg.text}`;
-    chatBox.appendChild(div);
+  const userRef = ref(db, 'users/' + user.uid);
+  get(userRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      document.getElementById("uniqueIDText").textContent = data.uniqueID;
+      document.getElementById("accountTab").style.display = "block";
+    } else {
+      alert("User data not found.");
+    }
+  }).catch((error) => {
+    console.error(error);
+    alert("Failed to load account data.");
   });
 }
+
+// --- Auth UI Updates ---
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // Hide login/signup, show settings
+    document.getElementById("loginBtn")?.style.display = "none";
+    document.getElementById("signupBtn")?.style.display = "none";
+    document.getElementById("settingsIcon")?.style.display = "inline-block";
+  }
+});

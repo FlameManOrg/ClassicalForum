@@ -2,104 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - ClassicalForum</title>
-  <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .container {
-      background-color: #111;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #444;
-      text-align: center;
-    }
-    input {
-      display: block;
-      margin: 10px auto;
-      padding: 10px;
-      width: 200px;
-      background-color: #222;
-      color: #fff;
-      border: 1px solid #555;
-      border-radius: 5px;
-    }
-    button {
-      background-color: #555;
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 5px;
-    }
-    button:hover {
-      background-color: #777;
-    }
-    .home-link {
-      margin-top: 10px;
-      color: #ccc;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h2>Login to ClassicalForum</h2>
-    <input type="text" id="username" placeholder="Username"/>
-    <input type="password" id="password" placeholder="Password"/>
-    <button onclick="login()">Login</button>
-    <div class="home-link" onclick="goHome()">← Go Home</div>
-  </div>
+  <header class="header">
+    <div class="left">
+      <h1>ClassicalForum</h1>
+      <button onclick="goToHome()">Home</button>
+    </div>
+  </header>
 
-  <script>
-    const specialAccounts = {
-      Developer: { password: "admin01", role: "developer" },
-      Administrator: { password: "admin01", role: "admin" },
-      Moderator: { password: "admin01", role: "mod" }
+  <main>
+    <h2>Login to your account</h2>
+    <form id="loginForm">
+      <input type="text" id="loginUsername" placeholder="Username" required /><br />
+      <input type="password" id="loginPassword" placeholder="Password" required /><br />
+      <button id="loginBtn">Login</button>
+    </form>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getDatabase,
+      ref,
+      get,
+      query,
+      orderByChild,
+      equalTo,
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDshvpsAN2oXfl6_0BNrzvwjKotJomB-hU",
+      authDomain: "flame-fb774.firebaseapp.com",
+      databaseURL: "https://flame-fb774-default-rtdb.firebaseio.com",
+      projectId: "flame-fb774",
+      storageBucket: "flame-fb774.firebasestorage.app",
+      messagingSenderId: "959179533406",
+      appId: "1:959179533406:web:5bd238c96eebb6c9db58cf",
     };
 
-    let storedUsers = JSON.parse(localStorage.getItem("users")) || {};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
 
-    for (const [username, data] of Object.entries(specialAccounts)) {
-      if (!storedUsers[username]) {
-        storedUsers[username] = { password: data.password, role: data.role };
-      }
+    function generateFakeEmail(username) {
+      return `${username.toLowerCase()}@classicalforum.local`;
     }
 
-    localStorage.setItem("users", JSON.stringify(storedUsers));
+    document.getElementById("loginBtn").addEventListener("click", async (e) => {
+      e.preventDefault();
 
-    function login() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
+      const username = document.getElementById("loginUsername").value.trim();
+      const password = document.getElementById("loginPassword").value;
 
       if (!username || !password) {
-        alert("Please enter both username and password.");
+        alert("Please enter username and password.");
         return;
       }
 
-      storedUsers = JSON.parse(localStorage.getItem("users")) || {};
-      const user = storedUsers[username];
+      const fakeEmail = generateFakeEmail(username);
 
-      if (user && user.password === password) {
-        localStorage.setItem("loggedInUser", username);
+      try {
+        await signInWithEmailAndPassword(auth, fakeEmail, password);
+        alert("Login successful!");
         window.location.href = "index.html";
-      } else {
-        alert("Invalid username or password.");
+      } catch (error) {
+        alert("Login failed: " + error.message);
       }
-    }
+    });
+  </script>
 
-    function goHome() {
+  <script>
+    function goToHome() {
       window.location.href = "index.html";
     }
   </script>

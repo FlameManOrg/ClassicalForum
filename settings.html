@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Settings - ClassicalForum</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="left">
+      <h1>ClassicalForum</h1>
+      <button onclick="goToHome()">Home</button>
+      <button onclick="goToForum()">Forum</button>
+    </div>
+    <div class="right">
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <h2>Settings</h2>
+
+    <section id="accountSection" style="margin-top: 30px;">
+      <h3>Account</h3>
+      <p><strong>Your User ID:</strong></p>
+      <div id="userIdDisplay" style="font-family: monospace; background:#252a40; padding: 10px; border-radius: 5px; user-select: all;"></div>
+    </section>
+
+    <section id="dangerZone" style="margin-top: 40px;">
+      <h3 style="color: #e63946;">Danger Zone</h3>
+      <button id="deleteAccountBtn" style="background:#e63946; color:#fff; border:none; padding: 10px 15px; border-radius: 6px; cursor: pointer;">
+        Delete Account
+      </button>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut,
+      deleteUser,
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getDatabase,
+      ref,
+      get,
+      remove,
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDshvpsAN2oXfl6_0BNrzvwjKotJomB-hU",
+      authDomain: "flame-fb774.firebaseapp.com",
+      databaseURL: "https://flame-fb774-default-rtdb.firebaseio.com",
+      projectId: "flame-fb774",
+      storageBucket: "flame-fb774.firebasestorage.app",
+      messagingSenderId: "959179533406",
+      appId: "1:959179533406:web:5bd238c96eebb6c9db58cf",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    const userIdDisplay = document.getElementById("userIdDisplay");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const deleteAccountBtn = document.getElementById("deleteAccountBtn");
+
+    let currentUser = null;
+    let currentUserData = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+
+        // Get user data from DB
+        try {
+          const userRef = ref(db, "users/" + user.uid);
+          const snapshot = await get(userRef);
+          if (snapshot.exists()) {
+            currentUserData = snapshot.val();
+            userIdDisplay.textContent = currentUserData.uniqueID || "No ID assigned";
+          } else {
+            userIdDisplay.textContent = "No ID found";
+          }
+        } catch (error) {
+          console.error("Failed to load user data:", error);
+          userIdDisplay.textContent = "Error loading ID";
+        }
+      } else {
+        // Not logged in, redirect to login
+        window.location.href = "login.html";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
+    });
+
+    deleteAccountBtn.addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to permanently delete your account? This action cannot be undone.")) return;
+
+      try {
+        // Remove user data from database
+        await remove(ref(db, "users/" + currentUser.uid));
+
+        // Delete Firebase Auth user
+        await deleteUser(currentUser);
+
+        alert("Account deleted successfully.");
+        window.location.href = "index.html";
+      } catch (error) {
+        if (error.code === "auth/requires-recent-login") {
+          alert("Please log out and log in again before deleting your account for security reasons.");
+          await signOut(auth);
+          window.location.href = "login.html";
+        } else {
+          alert("Failed to delete account: " + error.message);
+        }
+      }
+    });
+
+    function goToHome() {
+      window.location.href = "index.html";
+    }
+    function goToForum() {
+      window.location.href = "forum.html";
+    }
+  </script>
+</body>
+</html>
