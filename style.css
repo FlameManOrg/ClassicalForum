@@ -1,0 +1,52 @@
+body {
+  background-color: black;
+  color: white;
+  font-family: monospace;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+input, button, a.btn {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  background: #111;
+  color: white;
+  border: 1px solid white;
+  text-decoration: none;
+}
+
+a.btn:hover, button:hover {
+  background: white;
+  color: black;
+}
+
+.error {
+  background: red;
+  padding: 10px;
+  position: relative;
+}
+
+.error button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: black;
+  color: white;
+  border: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.terminal {
+  background: #111;
+  padding: 20px;
+  margin-top: 30px;
+  border: 1px solid white;
+}
